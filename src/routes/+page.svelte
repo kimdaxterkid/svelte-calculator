@@ -1,21 +1,50 @@
 <script lang="ts">
 	const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."];
 	const operations = ["/", "x", "-", "+", "="];
+	let selectedOperation = "";
+
+	const handleOpertaionClick = (operation: string) => {
+		selectedOperation = operation;
+	};
+	const handleNumberClick = (number: string) => {
+		if (display === "" && number === "0") return;
+		if (number === "." && display.includes(".")) return;
+		if (display === "" && number === ".") {
+			display = "0.";
+			return;
+		}
+		display = `${display}${number}`;
+	};
+	let display = "";
 </script>
 
 <main>
 	<div class="calculator">
-		<div class="results" />
+		<div class="results">
+			{display}
+		</div>
 		<div class="digits">
 			<div class="numbers">
 				<button class="btn btn-xlg"> C </button>
 				{#each numbers as number (number)}
-					<button class={`btn ${number === "0" ? "btn-lg" : null}`}> {number} </button>
+					<button
+						class={`btn ${number === "0" ? "btn-lg" : null}`}
+						on:click={() => handleNumberClick(number)}
+					>
+						{number}
+					</button>
 				{/each}
 			</div>
 			<div class="operations">
 				{#each operations as operation (operation)}
-					<button class="btn btn-orange"> {operation} </button>
+					<button
+						class={`btn ${
+							operation === selectedOperation ? "btn-silver" : "btn-orange"
+						}`}
+						on:click={() => handleOpertaionClick(operation)}
+					>
+						{operation}
+					</button>
 				{/each}
 			</div>
 		</div>
