@@ -2,20 +2,73 @@
 	const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."];
 	const operations = ["/", "x", "-", "+", "="];
 	let selectedOperation = "";
+	let display = "";
+	let firstNumber = "";
+	let secondNumber = "";
+	let isDisplayingResult = false;
 
 	const handleOpertaionClick = (operation: string) => {
+		if (!firstNumber) return;
+		if (operation === "=") {
+			if (!secondNumber) return;
+			const firstNum = parseInt(firstNumber);
+			const secondNum = parseInt(secondNumber);
+			let result = "";
+			switch (selectedOperation) {
+				case "/":
+					result = (firstNum / secondNum).toFixed(2);
+					break;
+				case "x":
+					result = (firstNum * secondNum).toFixed(2);
+					break;
+				case "+":
+					result = (firstNum + secondNum).toFixed(2);
+					break;
+				case "-":
+					result = (firstNum - secondNum).toFixed(2);
+					break;
+			}
+			display = result;
+			isDisplayingResult = true;
+		}
 		selectedOperation = operation;
 	};
+
+	const handleClear = () => {
+		firstNumber = "";
+		secondNumber = "";
+		selectedOperation = "";
+		display = "";
+		isDisplayingResult = false;
+	};
+
 	const handleNumberClick = (number: string) => {
+		if (isDisplayingResult) {
+			handleClear();
+		}
 		if (display === "" && number === "0") return;
 		if (number === "." && display.includes(".")) return;
-		if (display === "" && number === ".") {
-			display = "0.";
-			return;
+
+		if (!selectedOperation) {
+			if (display === "" && number === ".") {
+				display = "0.";
+				firstNumber = "0.";
+				return display;
+			}
+			firstNumber = `${firstNumber}${number}`;
+			display = firstNumber;
+			return display;
+		} else {
+			if (display === "" && number === ".") {
+				display = "0.";
+				secondNumber = "0.";
+				return display;
+			}
+			secondNumber = `${secondNumber}${number}`;
+			display = secondNumber;
+			return display;
 		}
-		display = `${display}${number}`;
 	};
-	let display = "";
 </script>
 
 <main>
@@ -25,7 +78,7 @@
 		</div>
 		<div class="digits">
 			<div class="numbers">
-				<button class="btn btn-xlg"> C </button>
+				<button class="btn btn-xlg" on:click={() => handleClear()}> C </button>
 				{#each numbers as number (number)}
 					<button
 						class={`btn ${number === "0" ? "btn-lg" : null}`}
